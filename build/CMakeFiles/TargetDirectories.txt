@@ -1,0 +1,3 @@
+/home/ammar/sitl_agcam/gige_cam/build/CMakeFiles/rebuild_cache.dir
+/home/ammar/sitl_agcam/gige_cam/build/CMakeFiles/edit_cache.dir
+/home/ammar/sitl_agcam/gige_cam/build/CMakeFiles/cam_gige.dir
