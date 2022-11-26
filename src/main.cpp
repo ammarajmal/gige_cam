@@ -1,12 +1,14 @@
-﻿// #include "CameraApi.h" // API header file of camera SDK
-#include "CameraApi.h"
+﻿#include "CameraApi.h" // API header file of camera SDK
 #include "opencv2/core.hpp"
 #include "opencv2/videoio/legacy/constants_c.h"
 #include "opencv2/highgui/highgui_c.h"
 #include "opencv2/highgui.hpp"
+#include <iomanip>
 #include <stdio.h>
+#include <iostream>
 
 using namespace cv;
+using namespace std;
 
 unsigned char           * g_pRgbBuffer;     //processed data cache
 
@@ -47,6 +49,8 @@ int main()
     if(iStatus!=CAMERA_STATUS_SUCCESS){
         return -1;
     }
+
+
     //Get the camera's characteristic description structure. 
     // This structure contains the range information of various parameters that can be set
     //  by the camera. Determines the parameters of the relevant function
@@ -55,8 +59,7 @@ int main()
 
     //
     g_pRgbBuffer = (unsigned char*)malloc(tCapability.sResolutionRange.iHeightMax*tCapability.sResolutionRange.iWidthMax*3);
-    //g_readBuf = (unsigned char*)malloc(tCapability.sResolutionRange.iHeightMax*tCapability.sResolutionRange.iWidthMax*3);
-
+       
      /* Let the SDK enter the working mode and start receiving images sent from the camera
      data. If the current camera is in trigger mode, it needs to receive
      The image is not updated until the frame is triggered. */
@@ -79,8 +82,9 @@ int main()
 
 
 // Loop to display 1000 frames of images
-    while(iDisplayFrames--)
+    while(true)
     {
+
         if(CameraGetImageBuffer(hCamera,&sFrameInfo,&pbyBuffer,1000) == CAMERA_STATUS_SUCCESS)
 		{
 		    CameraImageProcess(hCamera, pbyBuffer, g_pRgbBuffer,&sFrameInfo);
@@ -90,9 +94,13 @@ int main()
 					sFrameInfo.uiMediaType == CAMERA_MEDIA_TYPE_MONO8 ? CV_8UC1 : CV_8UC3,
 					g_pRgbBuffer
 					);
+
+            cv::namedWindow("Opencv Demo");
 			imshow("Opencv Demo", matImage);
 
-            waitKey(5);
+            int key = cv::waitKey(1);
+            if (key == 27) // ESP stop
+                break;
 
             // After successfully calling CameraGetImageBuffer, 
             // you must call CameraReleaseImageBuffer to release the obtained buffer.
